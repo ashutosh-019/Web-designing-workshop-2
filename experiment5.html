@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Salary Management System</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #b2d8d8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Georgia, serif;
+    }
+
+    .card {
+      background: #e8f4f4;
+      border-radius: 12px;
+      
+      padding: 40px 60px;
+      width: 600px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: bold;
+      color: #1a1a2e;
+      margin-bottom: 28px;
+      letter-spacing: 0.3px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 240px;
+      padding: 8px 12px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      background: #f5fafa;
+      font-size: 13px;
+      color: #333;
+      outline: none;
+    }
+
+    input::placeholder { color: #888; }
+
+    input:focus { border-color: #4a7c59; }
+
+    .btn-add {
+      margin: 8px auto 16px;
+      display: block;
+      background: #3a6b3a;
+      color: white;
+      border: none;
+      padding: 9px 28px;
+      border-radius: 5px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-add:hover { background: #2e5530; }
+
+    .btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .btn-row button, .btn-center {
+      background: #3a6b3a;
+      color: white;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 5px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-row button:hover, .btn-center:hover { background: #2e5530; }
+
+    .btn-center-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .output {
+      margin-top: 20px;
+      text-align: left;
+      font-size: 13px;
+      color: #222;
+      background: #f0f8f8;
+      border-radius: 6px;
+      padding: 12px 16px;
+      max-height: 220px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .output.visible { display: block; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 6px 10px; border-bottom: 1px solid #ccc; text-align: left; }
+    th { background: #c8e6c9; color: #1a3a1a; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>Employee Salary Management System</h1>
+
+  <div class="input-group">
+    <input type="text" id="empName" placeholder="Employee Name" />
+    <input type="text" id="empId" placeholder="Employee ID" />
+    <input type="number" id="salary" placeholder="Salary" />
+    <input type="text" id="department" placeholder="Department" />
+  </div>
+
+  <button class="btn-add" onclick="addEmployee()">Add Employee</button>
+
+  <div class="btn-row">
+    <button onclick="displayAll()">Display All</button>
+    <button onclick="salaryAbove50000()">Salary &gt; 50000</button>
+    <button onclick="totalSalary()">Total Salary</button>
+    <button onclick="avgSalary()">Average Salary</button>
+  </div>
+
+  <div class="btn-center-wrap">
+    <button class="btn-center" onclick="countByDepartment()">Count by Department</button>
+  </div>
+
+  <div class="output" id="output"></div>
+</div>
+
+<script>
+  let employees = [];
+
+  function addEmployee() {
+    const name = document.getElementById('empName').value.trim();
+    const id = document.getElementById('empId').value.trim();
+    const salary = parseFloat(document.getElementById('salary').value);
+    const dept = document.getElementById('department').value.trim();
+
+    if (!name || !id || isNaN(salary) || !dept) {
+      showOutput('<p style="color:red">Please fill all fields correctly.</p>');
+      return;
+    }
+
+    employees.push({ name, id, salary, dept });
+    document.getElementById('empName').value = '';
+    document.getElementById('empId').value = '';
+    document.getElementById('salary').value = '';
+    document.getElementById('department').value = '';
+    showOutput(`<p>✅ Employee <strong>${name}</strong> added successfully!</p>`);
+  }
+
+  function displayAll() {
+    if (!employees.length) { showOutput('<p>No employees found.</p>'); return; }
+    let html = buildTable(employees);
+    showOutput(html);
+  }
+
+  function salaryAbove50000() {
+    const filtered = employees.filter(e => e.salary > 50000);
+    if (!filtered.length) { showOutput('<p>No employees with salary &gt; 50000.</p>'); return; }
+    showOutput(buildTable(filtered));
+  }
+
+  function totalSalary() {
+    if (!employees.length) { showOutput('<p>No employees found.</p>'); return; }
+    const total = employees.reduce((s, e) => s + e.salary, 0);
+    showOutput(`<p><strong>Total Salary:</strong> ₹${total.toLocaleString()}</p>`);
+  }
+
+  function avgSalary() {
+    if (!employees.length) { showOutput('<p>No employees found.</p>'); return; }
+    const avg = employees.reduce((s, e) => s + e.salary, 0) / employees.length;
+    showOutput(`<p><strong>Average Salary:</strong> ₹${avg.toFixed(2)}</p>`);
+  }
+
+  function countByDepartment() {
+    if (!employees.length) { showOutput('<p>No employees found.</p>'); return; }
+    const counts = {};
+    employees.forEach(e => counts[e.dept] = (counts[e.dept] || 0) + 1);
+    let html = '<table><tr><th>Department</th><th>Count</th></tr>';
+    for (const [dept, count] of Object.entries(counts)) {
+      html += `<tr><td>${dept}</td><td>${count}</td></tr>`;
+    }
+    html += '</table>';
+    showOutput(html);
+  }
+
+  function buildTable(data) {
+    let html = '<table><tr><th>Name</th><th>ID</th><th>Salary</th><th>Department</th></tr>';
+    data.forEach(e => {
+      html += `<tr><td>${e.name}</td><td>${e.id}</td><td>₹${e.salary.toLocaleString()}</td><td>${e.dept}</td></tr>`;
+    });
+    return html + '</table>';
+  }
+
+  function showOutput(html) {
+    const out = document.getElementById('output');
+    out.innerHTML = html;
+    out.classList.add('visible');
+  }
+</script>
+</body>
+</html>

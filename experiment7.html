@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Information</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      background: #d9eac0;
+      padding: 20px;
+    }
+
+    .container {
+      background: #8484da;
+      border: 1.5px solid #4133d7;
+      border-radius: 4px;
+      padding: 24px 20px;
+      width: 340px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 20px;
+    }
+
+    .card {
+      background: #ecb5b5;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .card:last-child {
+      margin-bottom: 0;
+    }
+
+    .card-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+
+    .card-detail {
+      font-size: 14px;
+      color: #444;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Student Information</h1>
+    <div id="cards"></div>
+  </div>
+
+  <script>
+    const students = [
+      { name: "Ashutosh Yadav",  course: "Computer Science",       marks: 85 },
+      { name: "Satyam ",   course: "Information Technology", marks: 92 },
+      { name: "Aditya Singh",   course: "Electronics",            marks: 78 }
+    ];
+
+    const container = document.getElementById('cards');
+
+    students.forEach(s => {
+      container.innerHTML += `
+        <div class="card">
+          <p class="card-name">${s.name}</p>
+          <p class="card-detail">Course: ${s.course}</p>
+          <p class="card-detail">Marks: ${s.marks}</p>
+        </div>`;
+    });
+  </script>
+
+</body>
+</html>

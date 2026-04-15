@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Result Calculator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #d0d0d0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+    }
+    .outer {
+      background: #e8e8e8;
+      border: 1.5px solid #bbb;
+      border-radius: 8px;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 500px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 2.5rem 2.5rem 2rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+      min-width: 340px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+    .card h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #111;
+    }
+    .card label {
+      font-size: 15px;
+      color: #444;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .card input[type=number] {
+      width: 100%;
+      font-size: 16px;
+      padding: 10px 14px;
+      border: 1.5px solid #aaa;
+      border-radius: 6px;
+      outline: none;
+      margin-bottom: 1.25rem;
+      color: #111;
+      background: #fff;
+    }
+    .calc-btn {
+      background: #2222cc;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 32px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .calc-btn:hover { background: #1a1aaa; }
+    .result-pill {
+      display: inline-block;
+      background: #666;
+      color: #ccc;
+      border-radius: 999px;
+      font-size: 28px;
+      font-weight: 500;
+      padding: 14px 40px;
+      margin-top: 1.5rem;
+      min-width: 120px;
+    }
+    .inputs-section {
+      margin: 1rem 0;
+      text-align: left;
+    }
+    .subject-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .subject-row label {
+      font-size: 13px;
+      color: #555;
+      min-width: 70px;
+    }
+    .subject-row input {
+      flex: 1;
+      font-size: 14px;
+      padding: 6px 10px;
+      border: 1px solid #bbb;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="outer">
+    <div class="card">
+      <h2>Student Result Calculator</h2>
+      <label for="numSubjects">Enter Number of Subjects</label>
+      <input type="number" id="numSubjects" value="5" min="1" max="20" />
+      <div id="subjectInputs" class="inputs-section"></div>
+      <button class="calc-btn" onclick="calculate()">Calculate Result</button>
+      <div id="resultArea"></div>
+    </div>
+  </div>
+
+  <script>
+    const numEl = document.getElementById('numSubjects');
+    const subjectInputs = document.getElementById('subjectInputs');
+    const resultArea = document.getElementById('resultArea');
+
+    function renderSubjectInputs() {
+      const n = parseInt(numEl.value) || 0;
+      subjectInputs.innerHTML = '';
+      for (let i = 1; i <= n; i++) {
+        subjectInputs.innerHTML += `
+          <div class="subject-row">
+            <label>Subject ${i}</label>
+            <input type="number" id="marks_${i}" placeholder="Marks" min="0" max="100" />
+          </div>`;
+      }
+      resultArea.innerHTML = '';
+    }
+
+    function calculate() {
+      const n = parseInt(numEl.value) || 0;
+      let total = 0, count = 0;
+      for (let i = 1; i <= n; i++) {
+        const val = parseFloat(document.getElementById('marks_' + i)?.value);
+        if (!isNaN(val)) { total += val; count++; }
+      }
+      const pct = count > 0 ? Math.round(total / count) : 0;
+      resultArea.innerHTML = `<div class="result-pill">${pct}%</div>`;
+    }
+
+    numEl.addEventListener('input', renderSubjectInputs);
+    renderSubjectInputs();
+  </script>
+</body>
+</html>
